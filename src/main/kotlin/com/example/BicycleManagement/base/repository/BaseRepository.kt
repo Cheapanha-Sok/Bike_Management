@@ -1,3 +1,5 @@
+package com.example.BicycleManagement.base.repository
+
 import org.springframework.dao.OptimisticLockingFailureException
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.repository.NoRepositoryBean
@@ -5,7 +7,7 @@ import org.springframework.data.repository.Repository
 import java.util.*
 
 @NoRepositoryBean
-interface CrudRepository<T, ID>: Repository<T, ID> , JpaSpecificationExecutor<T>{
+interface BaseRepository<T, ID>: Repository<T, ID> , JpaSpecificationExecutor<T>{
     /**
      * Saves all given entities.
      *

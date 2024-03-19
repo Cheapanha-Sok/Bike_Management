@@ -3,7 +3,8 @@ package com.example.BicycleManagement.dto.mapper
 import com.example.BicycleManagement.dto.BicycleDto
 import com.example.BicycleManagement.model.Bicycle
 import org.springframework.stereotype.Service
-import java.util.*
+import java.time.LocalDate
+
 import java.util.function.Function
 @Service
 class BicycleMapper : Function<Bicycle , BicycleDto> {
@@ -13,7 +14,7 @@ class BicycleMapper : Function<Bicycle , BicycleDto> {
             id = bicycle.id ?: 0,
             name = bicycle.name ?: "Unknown",
             category = bicycle.category?.name ?: "Uncategorized",
-            manufactureDate = bicycle.manufactureDate ?: Date(),
+            manufactureDate = bicycle.manufactureDate!!,
             status = bicycle.status!!,
             quantity = bicycle.quantity!!,
             price = bicycle.sellPrice ?: bicycle.unitPrice

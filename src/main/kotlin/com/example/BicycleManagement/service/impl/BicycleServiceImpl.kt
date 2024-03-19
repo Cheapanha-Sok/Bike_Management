@@ -45,7 +45,8 @@ class BicycleServiceImpl(
     }
 
     override fun create(supplierId: Long, newBicycle: List<Bicycle>): MessageResponse {
-        val supplier : Supplier = supplierRepository.findById(supplierId)!!.orElseThrow { NotFoundException("Supplier not found with id $supplierId") }
+        val supplier: Supplier = supplierRepository.findById(supplierId)!!
+            .orElseThrow { NotFoundException("Supplier not found with id $supplierId") }
 
         newBicycle.map { bicycle ->
             val category = bicycle.category
@@ -60,39 +61,41 @@ class BicycleServiceImpl(
         return MessageResponse()
     }
 
-    override fun deleteById(id: Long) : MessageResponse {
-        val bicycle : Bicycle = bicycleRepository.findById(id)!!.orElseThrow { NotFoundException("Bicycle not found with id $id") }
+    override fun deleteById(id: Long): MessageResponse {
+        val bicycle: Bicycle =
+            bicycleRepository.findById(id)!!.orElseThrow { NotFoundException("Bicycle not found with id $id") }
         bicycleRepository.delete(bicycle).let { return MessageResponse() }
     }
 
     override fun sell(sellBike: List<SellDto>): MessageResponse {
         sellBike.forEach { bike ->
-            val existingBike = bicycleRepository.findById(bike.id)
-            if (existingBike != null) {
-                if (existingBike.isPresent) {
-                    val quantityToSell = bike.quantity
+            val existingBike = bicycleRepository.findById(bike.id)!!
+            existingBike.isPresent.let {
+                val quantityToSell = bike.quantity
+                if (quantityToSell > 0) {
                     val existingQuantity = existingBike.get().quantity ?: 0
                     val newQuantity = existingQuantity - quantityToSell
                     existingBike.get().quantity = newQuantity
                     existingBike.get().status = newQuantity > 0
                     bicycleRepository.save(existingBike.get())
-                }
+                } else
+                    throw RuntimeException("Bicycle out of stock")
             }
         }
         return MessageResponse()
     }
-
-
-    override fun updateById(id: Long, updateBicycle: Bicycle): MessageResponse {
-        val existingBicycle = bicycleRepository.findById(id)
-            ?.orElseThrow { NotFoundException("Bicycle not found with id: $id") }
-
-        updateBicycle.sellPrice?.let {
-            if (existingBicycle != null) {
-                existingBicycle.sellPrice = it
-            }
-        }
+    override fun updateById(id: Long, updateBicycle: BicycleDto): MessageResponse {
+        val existingBicycle = bicycleRepository.findById(id)?.orElseThrow { NotFoundException("Bicycle not found with id: $id") }
+        updateBicycle.name?.let { existingBicycle?.name = updateBicycle.name }
+        updateBicycle.status?.let { existingBicycle?.status = updateBicycle.status }
+        updateBicycle.quantity?.let { existingBicycle?.quantity = updateBicycle.quantity }
+        updateBicycle.category?.let { existingBicycle?.category?.name = updateBicycle.name }
+        updateBicycle.price?.let { existingBicycle?.sellPrice = updateBicycle.price }
+        updateBicycle.manufactureDate?.let { existingBicycle?.manufactureDate = updateBicycle.manufactureDate }
         bicycleRepository.save(existingBicycle).let { return MessageResponse() }
     }
 
+    override fun findByName(name: String): ObjectResponse<List<BicycleDto>> {
+        bicycleRepository.findByName(name).let { return ObjectResponse(it.map { bicycleMapper.apply(it) }) }
+    }
 }

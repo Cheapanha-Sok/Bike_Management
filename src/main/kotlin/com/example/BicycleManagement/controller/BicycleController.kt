@@ -36,6 +36,10 @@ class BicycleController(private val bicycleService: BicycleService) {
     fun show(@PathVariable("id") id: Long) : ObjectResponse<BicycleDto> {
         return bicycleService.show(id)
     }
+    @GetMapping("name/{name}")
+    fun show(@PathVariable("name") name: String) : ObjectResponse<List<BicycleDto>> {
+        return bicycleService.findByName(name)
+    }
 
     @PostMapping("/create/{supplier_id}")
     fun create(
@@ -55,7 +59,7 @@ class BicycleController(private val bicycleService: BicycleService) {
     }
 
     @PutMapping("/put/{id}")
-    fun updateById(@PathVariable("id") id: Long, @RequestBody updatedBicycle: Bicycle) : MessageResponse {
+    fun updateById(@PathVariable("id") id: Long, @RequestBody updatedBicycle: BicycleDto) : MessageResponse {
         return bicycleService.updateById(id, updatedBicycle)
     }
 }

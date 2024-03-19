@@ -2,7 +2,7 @@ package com.example.BicycleManagement.model
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import jakarta.persistence.*
-import java.sql.Date
+import java.time.LocalDate
 
 @Entity
 @Table(name = "bicycles")
@@ -13,7 +13,7 @@ data class Bicycle(
     var name :String ? = null,
     @Column(name = "manufacture_date")
     @JsonFormat(pattern = "yyyy-mm-dd")
-    var manufactureDate : Date ? = null,
+    var manufactureDate : LocalDate ? = null,
     @Column(name = "unit_price")
     var unitPrice : Float ? = null,
     @Column(name = "sell_price")

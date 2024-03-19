@@ -1,6 +1,6 @@
 package com.example.BicycleManagement.repository
 
-import CrudRepository
+import com.example.BicycleManagement.base.repository.BaseRepository
 import com.example.BicycleManagement.model.Supplier
 
-interface SupplierRepository : CrudRepository<Supplier , Long>
+interface SupplierRepository : BaseRepository<Supplier, Long>

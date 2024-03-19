@@ -15,5 +15,6 @@ interface BicycleService {
     fun create(supplierId :Long , newBicycle : List<Bicycle>) : MessageResponse
     fun deleteById(id :Long) : MessageResponse
     fun sell(sellBike: List<SellDto>) : MessageResponse
-    fun updateById(id:Long , updateBicycle : Bicycle) : MessageResponse
+    fun updateById(id:Long , updateBicycle : BicycleDto) : MessageResponse
+    fun findByName(name :String) : ObjectResponse<List<BicycleDto>>
 }
