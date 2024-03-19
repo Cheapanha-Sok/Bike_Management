@@ -14,7 +14,7 @@ class CategoryServiceImpl (private val categoryRepository: CategoryRepository) :
         categoryRepository.findAll().let { return ObjectResponse(it) }
     }
     override fun show(id: Long): ObjectResponse<Category> {
-        val category : Category = categoryRepository.findById(id).orElseThrow { NotFoundException("Category not found with id $id") }
+        val category : Category = categoryRepository.findById(id)!!.orElseThrow { NotFoundException("Category not found with id $id") }
         return ObjectResponse(category)
     }
 
@@ -23,12 +23,12 @@ class CategoryServiceImpl (private val categoryRepository: CategoryRepository) :
     }
 
     override fun deleteById(id: Long) : MessageResponse {
-        val category : Category = categoryRepository.findById(id).orElseThrow { NotFoundException("Category not found with id $id") }
+        val category : Category = categoryRepository.findById(id)!!.orElseThrow { NotFoundException("Category not found with id $id") }
         categoryRepository.delete(category).let { return MessageResponse() }
     }
 
     override fun updateById(id: Long, updateCategory: Category) : MessageResponse {
-        val category : Category = categoryRepository.findById(id).orElseThrow { NotFoundException("Category not found with id $id") }
+        val category : Category = categoryRepository.findById(id)!!.orElseThrow { NotFoundException("Category not found with id $id") }
         updateCategory.name?.let { category.name = updateCategory.name }
         updateCategory.code?.let { category.code = updateCategory.code }
         categoryRepository.save(category).let { return MessageResponse() }

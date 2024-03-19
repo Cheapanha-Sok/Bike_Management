@@ -16,7 +16,8 @@ import com.example.BicycleManagement.service.BicycleService
 import jakarta.persistence.criteria.Predicate
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
-import java.util.Locale
+import java.util.*
+import kotlin.collections.ArrayList
 
 @Service
 class BicycleServiceImpl(
@@ -39,13 +40,12 @@ class BicycleServiceImpl(
     }
 
     override fun show(id: Long): ObjectResponse<BicycleDto> {
-        val bicycle = bicycleRepository.findById(id).orElseThrow { NotFoundException("Bicycle with id $id not found") }
-        return ObjectResponse(bicycleMapper.apply(bicycle))
+        val bicycle = bicycleRepository.findById(id)?.orElseThrow { NotFoundException("Bicycle with id $id not found") }
+        return ObjectResponse(bicycleMapper.apply(bicycle!!))
     }
 
     override fun create(supplierId: Long, newBicycle: List<Bicycle>): MessageResponse {
-        val supplier: Supplier = supplierRepository.findById(supplierId)
-            .orElseThrow { NotFoundException("Supplier not found with id: $supplierId") }
+        val supplier : Supplier = supplierRepository.findById(supplierId)!!.orElseThrow { NotFoundException("Supplier not found with id $supplierId") }
 
         newBicycle.map { bicycle ->
             val category = bicycle.category
@@ -61,20 +61,22 @@ class BicycleServiceImpl(
     }
 
     override fun deleteById(id: Long) : MessageResponse {
-        val bicycle : Bicycle = bicycleRepository.findById(id).orElseThrow { NotFoundException("Bicycle not found with id $id") }
+        val bicycle : Bicycle = bicycleRepository.findById(id)!!.orElseThrow { NotFoundException("Bicycle not found with id $id") }
         bicycleRepository.delete(bicycle).let { return MessageResponse() }
     }
 
     override fun sell(sellBike: List<SellDto>): MessageResponse {
         sellBike.forEach { bike ->
             val existingBike = bicycleRepository.findById(bike.id)
-            if (existingBike.isPresent) {
-                val quantityToSell = bike.quantity
-                val existingQuantity = existingBike.get().quantity ?: 0
-                val newQuantity = existingQuantity - quantityToSell
-                existingBike.get().quantity = newQuantity
-                existingBike.get().status = newQuantity > 0
-                bicycleRepository.save(existingBike.get())
+            if (existingBike != null) {
+                if (existingBike.isPresent) {
+                    val quantityToSell = bike.quantity
+                    val existingQuantity = existingBike.get().quantity ?: 0
+                    val newQuantity = existingQuantity - quantityToSell
+                    existingBike.get().quantity = newQuantity
+                    existingBike.get().status = newQuantity > 0
+                    bicycleRepository.save(existingBike.get())
+                }
             }
         }
         return MessageResponse()
@@ -83,9 +85,13 @@ class BicycleServiceImpl(
 
     override fun updateById(id: Long, updateBicycle: Bicycle): MessageResponse {
         val existingBicycle = bicycleRepository.findById(id)
-            .orElseThrow { NotFoundException("Bicycle not found with id: $id") }
+            ?.orElseThrow { NotFoundException("Bicycle not found with id: $id") }
 
-        updateBicycle.sellPrice?.let { existingBicycle.sellPrice = it }
+        updateBicycle.sellPrice?.let {
+            if (existingBicycle != null) {
+                existingBicycle.sellPrice = it
+            }
+        }
         bicycleRepository.save(existingBicycle).let { return MessageResponse() }
     }
 

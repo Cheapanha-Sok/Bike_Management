@@ -1,6 +1,6 @@
 package com.example.BicycleManagement.repository
 
+import CrudRepository
 import com.example.BicycleManagement.model.Supplier
-import org.springframework.data.jpa.repository.JpaRepository
 
-interface SupplierRepository : JpaRepository<Supplier , Long>
+interface SupplierRepository : CrudRepository<Supplier , Long>

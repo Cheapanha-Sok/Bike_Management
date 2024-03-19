@@ -10,5 +10,4 @@ data class BicycleDto(
     var status : Boolean,
     var quantity : Int,
     var price : Float?
-
 )
