@@ -12,7 +12,10 @@ data class Category(
     var id: Long ? =null,
     @Column(unique = true)
     var code :String ? =null,
+    @Column(unique = true)
     var name: String ? =null,
     @OneToMany(mappedBy = "category")
-    var bicycles: List<Bicycle>? = null
+    var bicycles: List<Bicycle>? = null,
+    @OneToMany(mappedBy = "category")
+    var imports : List<Import>?=null,
 )

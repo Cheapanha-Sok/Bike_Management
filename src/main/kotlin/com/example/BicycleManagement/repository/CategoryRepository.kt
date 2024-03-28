@@ -5,5 +5,4 @@ import com.example.BicycleManagement.model.Category
 import java.util.Optional
 
 interface CategoryRepository: BaseRepository<Category, Long> {
-    fun findByName(name :String) : Optional<Category>
 }

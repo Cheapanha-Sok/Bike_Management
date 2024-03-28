@@ -1,15 +1,17 @@
 package com.example.BicycleManagement.controller
 
+import com.example.BicycleManagement.dto.BicycleDto
 import com.example.BicycleManagement.base.response.MessageResponse
 import com.example.BicycleManagement.base.response.ObjectResponse
 import com.example.BicycleManagement.base.response.PageResponse
-import com.example.BicycleManagement.dto.BicycleDto
+import com.example.BicycleManagement.dto.ImportBike
 import com.example.BicycleManagement.dto.SellDto
 import com.example.BicycleManagement.model.Bicycle
-import com.example.BicycleManagement.model.Category
 import com.example.BicycleManagement.service.BicycleService
+import com.example.BicycleManagement.service.ImportService
+import com.example.BicycleManagement.service.SellService
 import com.example.BicycleManagement.util.constants.Constant
-import jakarta.websocket.server.PathParam
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -22,7 +24,10 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("${Constant.MAIN_URL}bicycle")
-class BicycleController(private val bicycleService: BicycleService) {
+class BicycleController(
+    private val bicycleService: BicycleService,
+    private val importService: ImportService,
+    private val sellService: SellService) {
     @GetMapping
     fun index(
         @RequestParam(required = false) bicycleName :String?,
@@ -41,16 +46,15 @@ class BicycleController(private val bicycleService: BicycleService) {
         return bicycleService.findByName(name)
     }
 
-    @PostMapping("/create/{supplier_id}")
+    @PostMapping("/create")
     fun create(
-        @RequestBody newBicycle: List<Bicycle>,
-        @PathVariable("supplier_id") supplierId: Long,
+        @RequestBody newBicycle: List<ImportBike>,
     ): MessageResponse {
-        return bicycleService.create(supplierId, newBicycle)
+        return importService.create(newBicycle)
     }
-    @PostMapping("/sell")
-    fun sell(@RequestBody sellBike : List<SellDto>) : MessageResponse{
-        return bicycleService.sell(sellBike)
+    @PostMapping("/sell/{customer_id}")
+    fun sell( @RequestBody  sellBike :List<SellDto> , @PathVariable("customer_id") id : Long) : Any{
+        return sellService.sellBike(id , sellBike)
     }
 
     @DeleteMapping("/delete/{id}")

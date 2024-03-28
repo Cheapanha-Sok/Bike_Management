@@ -1,6 +1,6 @@
 package com.example.BicycleManagement.dto
 
 data class SellDto(
-    var id :Long,
+    var bicycleId :Long,
     var quantity : Int,
 )
